@@ -25,6 +25,11 @@ module.exports = (() => {
 
         models.sequelize = sequelize;
     }
+    models.User = require('./user.js');
+    models.Product = require('./product');
+
+    models.User.hasMany(models.Product)
+    models.Product.belongsTo(models.User, {constraints: true, onDelete: 'CASCADE'})
 
     return models;
 })();
