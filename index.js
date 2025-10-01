@@ -1,23 +1,29 @@
 const express = require('express');
-const sequelize = require('./util/db'); // importime valmis objekti
+const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = 3000;
 
-// Testime andmebaasi ühendust
-sequelize.authenticate()
-  .then(() => {
-    console.log('Ühendus andmebaasiga loodud!');
-  })
-  .catch(err => {
-    console.error('Andmebaasiga ühendus ebaõnnestus:', err);
-  });
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Test route
-app.get('/', (req, res) => {
-  res.json({ message: 'Web Shop Sequelize töötab!' });
-});
+app.use(bodyParser.json());
 
-app.listen(PORT, () => {
-  console.log(`Server töötab aadressil http://localhost:${PORT}`);
-});
+const productAdminRoutes = require('./routers/admin/products');
+app.use('/admin', productAdminRoutes);
+
+const productRoutes = require('./routers/products');
+app.use(productRoutes);
+
+const sequelize = require('./util/db');
+
+const models = require('./models/index');
+sequelize.models = models;
+
+sequelize
+    .sync()
+    .then(() => {
+        console.log('Tabelid on loodud');
+        app.listen(3000);
+    })
+    .catch(err => {
+        console.log(err);
+    })
