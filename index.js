@@ -32,6 +32,9 @@ app.use(productRoutes);
 const shopRoutes = require('./routers/shop');
 app.use(shopRoutes);
 
+const orderRoutes = require('./routers/order');
+app.use(orderRoutes);
+
 sequelize
     .sync()
     .then(() => {

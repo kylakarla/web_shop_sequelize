@@ -26,17 +26,21 @@ module.exports = (() => {
         models.sequelize = sequelize;
     }
 
-    models.User = require('./user.js');
-    models.Product = require('./product.js');
-    models.Cart = require('./cart.js');
-    models.CartItem = require('./cart-item.js');
+    models.User = require('./user');
+    models.Product = require('./product');
+    models.Cart = require('./cart');
+    models.CartItem = require('./cart-item');
+    models.Order = require('./order-items.js');
+    models.OrderItem = require('./order-items');
 
     models.User.hasMany(models.Product)
-    models.Product.belongsTo(models.User, {constraints: true, onDelete: 'CASCADE'})
     models.User.hasOne(models.Cart);
+    models.User.hasMany(models.Order);
+    models.Product.belongsTo(models.User, {constraints: true, onDelete: 'CASCADE'})
+    models.Product.belongsToMany(models.Cart, {through: models.CartItem});
+    models.Product.belongsToMany(models.Order, {through: models.OrderItem});
     models.Cart.belongsTo(models.User);
     models.Cart.belongsToMany(models.Product, {through: models.CartItem});
-    models.Product.belongsToMany(models.Cart, {through: models.CartItem})
 
     return models;
 })();
